@@ -1,0 +1,180 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+
+export default function TechTouchWebsite() {
+const [cart, setCart] = useState([]);
+const [total, setTotal] = useState(0);
+const [showAdmin, setShowAdmin] = useState(false);
+const [isAdmin, setIsAdmin] = useState(false);
+const [username, setUsername] = useState("");
+const [password, setPassword] = useState("");
+const [products, setProducts] = useState([
+{ id: 1, title: "Phone Holder", description: "Adjustable for all phones", price: 120 },
+{ id: 2, title: "Cleaning Kit", description: "Screen wipes & microfiber cloth", price: 50 },
+{ id: 3, title: "Wired Earphones", description: "Clear sound at the best price", price: 200 },
+]);
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "tech123";
+
+const addToCart = (product) => {
+setCart([...cart, product]);
+setTotal(total + product.price);
+};
+
+const loginAdmin = () => {
+if(username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+setIsAdmin(true);
+setShowAdmin(false);
+setUsername("");
+setPassword("");
+} else {
+alert("Incorrect username or password");
+}
+};
+
+const addProduct = () => {
+const newProduct = { id: Date.now(), title: "New Product", description: "Description", price: 0 };
+setProducts([...products, newProduct]);
+};
+
+const editProduct = (id, key, value) => {
+setProducts(products.map(p => p.id === id ? { ...p, [key]: value } : p));
+};
+
+return (
+<div className="min-h-screen bg-gray-950 text-white font-sans relative">
+{/* Admin 3-dot button */}
+<button onClick={() => setShowAdmin(!showAdmin)} className="absolute top-4 left-4 text-3xl">⋮</button>
+
+{showAdmin && (  
+    <div className="absolute top-12 left-4 bg-gray-800 p-6 rounded-xl shadow-xl z-50">  
+      {!isAdmin ? (  
+        <div className="space-y-4">  
+          <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-40 p-2 rounded" />  
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-40 p-2 rounded" />  
+          <button onClick={loginAdmin} className="w-full py-2 bg-red-600 rounded hover:bg-red-500">Login</button>  
+        </div>  
+      ) : (  
+        <div className="space-y-4">  
+          <p className="text-green-400">Admin Logged In</p>  
+          <button onClick={addProduct} className="w-full py-2 bg-blue-600 rounded hover:bg-blue-500">Add New Product</button>  
+        </div>  
+      )}  
+    </div>  
+  )}  
+
+  {/* Header */}  
+  <header className="w-full py-6 border-b border-gray-800 flex justify-between items-center px-10">  
+    <h1 className="text-3xl font-bold tracking-wide">Tech Touch</h1>  
+    <nav className="space-x-8 text-lg">  
+      <a href="#home" className="hover:text-red-400">Home</a>  
+      <a href="#products" className="hover:text-red-400">Products</a>  
+      <a href="#about" className="hover:text-red-400">About</a>  
+      <a href="#contact" className="hover:text-red-400">Contact</a>  
+      <a href="#cart" className="hover:text-red-400">Cart ({cart.length})</a>  
+    </nav>  
+  </header>  
+
+  {/* Language Switch */}  
+  <div className="flex justify-end px-10 mt-4">  
+    <button className="px-4 py-2 bg-gray-800 rounded-xl hover:bg-gray-700">عربي / EN</button>  
+  </div>  
+
+  {/* Hero Section */}  
+  <section id="home" className="h-[85vh] flex flex-col justify-center items-center text-center px-6">  
+    <motion.h2 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="text-5xl font-extrabold mb-6">  
+      Premium Phone Accessories  
+    </motion.h2>  
+    <motion.p initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }} className="text-gray-300 max-w-2xl text-xl mb-8">  
+      High-quality mobile accessories at unbeatable prices. Stylish, durable, and made for your everyday tech life.  
+    </motion.p>  
+    <motion.button whileHover={{ scale: 1.1 }} className="px-8 py-4 text-xl bg-red-600 rounded-2xl hover:bg-red-500 transition">  
+      Shop Now  
+    </motion.button>  
+  </section>  
+
+  {/* Product Section */}  
+  <section id="products" className="px-10 py-20">  
+    <h3 className="text-4xl font-bold mb-10 text-center">Products</h3>  
+    <div className="flex justify-center gap-4 mb-12 flex-wrap">  
+      <button className="px-6 py-2 bg-gray-800 rounded-xl hover:bg-red-600">Holders</button>  
+      <button className="px-6 py-2 bg-gray-800 rounded-xl hover:bg-red-600">Cables</button>  
+      <button className="px-6 py-2 bg-gray-800 rounded-xl hover:bg-red-600">Earphones</button>  
+      <button className="px-6 py-2 bg-gray-800 rounded-xl hover:bg-red-600">Cleaning Kits</button>  
+      <button className="px-6 py-2 bg-gray-800 rounded-xl hover:bg-red-600">All</button>  
+    </div>  
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">  
+      {products.map((product) => (  
+        <motion.div key={product.id} whileHover={{ scale: 1.05 }} className="bg-gray-900 p-6 rounded-2xl shadow-xl cursor-pointer">  
+          <div className="h-48 bg-gray-800 rounded-xl mb-4 flex justify-center items-center text-gray-400">Upload Image Here</div>  
+          {isAdmin ? (  
+            <input type="text" value={product.title} onChange={(e) => editProduct(product.id, 'title', e.target.value)} className="w-full p-2 rounded mb-2 text-black" />  
+          ) : (  
+            <h4 className="text-2xl font-semibold mb-2">{product.title}</h4>  
+          )}  
+          {isAdmin ? (  
+            <input type="text" value={product.description} onChange={(e) => editProduct(product.id, 'description', e.target.value)} className="w-full p-2 rounded mb-2 text-black" />  
+          ) : (  
+            <p className="text-gray-400 mb-4">{product.description}</p>  
+          )}  
+          {isAdmin ? (  
+            <input type="number" value={product.price} onChange={(e) => editProduct(product.id, 'price', parseInt(e.target.value))} className="w-full p-2 rounded mb-2 text-black" />  
+          ) : (  
+            <p className="text-red-500 font-bold mb-4">EGP {product.price}</p>  
+          )}  
+          <button onClick={() => addToCart(product)} className="px-6 py-2 bg-red-600 rounded-xl hover:bg-red-500">Add to Cart</button>  
+        </motion.div>  
+      ))}  
+    </div>  
+  </section>  
+
+  {/* Cart Section */}  
+  <section id="cart" className="px-10 py-20 bg-gray-900">  
+    <h3 className="text-4xl font-bold mb-6 text-center">Shopping Cart</h3>  
+    {cart.length === 0 ? (  
+      <p className="text-center text-gray-400">Your cart is empty.</p>  
+    ) : (  
+      <div className="max-w-2xl mx-auto space-y-4">  
+        {cart.map((item, index) => (  
+          <div key={index} className="flex justify-between p-4 bg-gray-800 rounded-xl">  
+            <span>{item.title}</span>  
+            <span>EGP {item.price}</span>  
+          </div>  
+        ))}  
+        <div className="flex justify-between p-4 bg-red-600 rounded-xl font-bold">  
+          <span>Total</span>  
+          <span>EGP {total}</span>  
+        </div>  
+        <button className="w-full py-4 bg-green-600 rounded-xl hover:bg-green-500">Pay on Delivery</button>  
+      </div>  
+    )}  
+  </section>  
+
+  {/* About */}  
+  <section id="about" className="px-10 py-20">  
+    <h3 className="text-4xl font-bold mb-6 text-center">About Tech Touch</h3>  
+    <p className="text-gray-300 max-w-3xl mx-auto text-center text-lg">  
+      We provide high-quality and affordable mobile accessories that fit every lifestyle. From holders to cleaning tools and premium earphones — Tech Touch is your trusted store.  
+    </p>  
+  </section>  
+
+  {/* Contact */}  
+  <section id="contact" className="px-10 py-20">  
+    <h3 className="text-4xl font-bold text-center mb-6">Contact Us</h3>  
+    <form className="max-w-xl mx-auto bg-gray-900 p-8 rounded-2xl shadow-xl space-y-6">  
+      <input type="text" placeholder="Your Name" className="w-full p-4 rounded-xl bg-gray-800" />  
+      <input type="email" placeholder="Email" className="w-full p-4 rounded-xl bg-gray-800" />  
+      <textarea placeholder="Message" className="w-full p-4 rounded-xl bg-gray-800 h-32"></textarea>  
+      <button className="w-full py-4 bg-red-600 rounded-xl hover:bg-red-500 text-xl">Send</button>  
+    </form>  
+  </section>  
+
+  {/* Footer */}  
+  <footer className="py-6 text-center text-gray-500 border-t border-gray-800">  
+    © {new Date().getFullYear()} Tech Touch — All Rights Reserved.  
+  </footer>  
+</div>
+
+);
+}
