@@ -1,0 +1,163 @@
+# Tech Touch Website
+
+React website for selling mobile accessories. Admin can add/edit products.  
+Deployed on Vercel.node_modules
+dist
+.envimport React, { useState } from "react";
+import { motion } from "framer-motion";
+
+export default function App() {
+  const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [products, setProducts] = useState([
+    { id: 1, title: "Phone Holder", description: "Adjustable for all phones", price: 120 },
+    { id: 2, title: "Cleaning Kit", description: "Screen wipes & microfiber cloth", price: 50 },
+    { id: 3, title: "Wired Earphones", description: "Clear sound at the best price", price: 200 }
+  ]);
+
+  const ADMIN_USERNAME = "admin";
+  const ADMIN_PASSWORD = "tech123";
+
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+    setTotal(total + product.price);
+  };
+
+  const loginAdmin = () => {
+    if(username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      setIsAdmin(true);
+      setShowAdmin(false);
+      setUsername("");
+      setPassword("");
+    } else {
+      alert("Incorrect username or password");
+    }
+  };
+
+  const addProduct = () => {
+    const newProduct = { id: Date.now(), title: "New Product", description: "Description", price: 0 };
+    setProducts([...products, newProduct]);
+  };
+
+  const editProduct = (id, key, value) => {
+    setProducts(products.map(p => p.id === id ? { ...p, [key]: value } : p));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white font-sans relative">
+      {/* Admin button */}
+      <button onClick={() => setShowAdmin(!showAdmin)} style={{position:'absolute', top:'10px', left:'10px', fontSize:'2rem'}}>⋮</button>
+      {showAdmin && (
+        <div style={{position:'absolute', top:'50px', left:'10px', background:'#222', padding:'20px', borderRadius:'12px'}}>
+          {!isAdmin ? (
+            <>
+              <input placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} /><br/>
+              <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} /><br/>
+              <button onClick={loginAdmin}>Login</button>
+            </>
+          ) : (
+            <>
+              <p style={{color:'green'}}>Admin Logged In</p>
+              <button onClick={addProduct}>Add Product</button>
+            </>
+          )}
+        </div>
+      )}
+
+      <header style={{display:'flex', justifyContent:'space-between', padding:'20px', borderBottom:'1px solid #444'}}>
+        <h1>Tech Touch</h1>
+        <nav>
+          <a href="#home" style={{margin:'0 10px'}}>Home</a>
+          <a href="#products" style={{margin:'0 10px'}}>Products</a>
+          <a href="#about" style={{margin:'0 10px'}}>About</a>
+          <a href="#contact" style={{margin:'0 10px'}}>Contact</a>
+          <a href="#cart" style={{margin:'0 10px'}}>Cart ({cart.length})</a>
+        </nav>
+      </header>
+
+      <section id="home" style={{height:'80vh', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+        <motion.h2 initial={{opacity:0, y:50}} animate={{opacity:1, y:0}}>Premium Phone Accessories</motion.h2>
+        <motion.p initial={{opacity:0, y:50}} animate={{opacity:1, y:0}}>High-quality accessories at unbeatable prices.</motion.p>
+        <motion.button whileHover={{scale:1.1}}>Shop Now</motion.button>
+      </section>
+
+      <section id="products" style={{padding:'50px'}}>
+        <h3>Products</h3>
+        <div style={{display:'flex', gap:'20px'}}>
+          {products.map(product=>(
+            <div key={product.id} style={{border:'1px solid #444', padding:'10px'}}>
+              {isAdmin ? (
+                <>
+                  <input value={product.title} onChange={e=>editProduct(product.id,'title',e.target.value)} /><br/>
+                  <input value={product.description} onChange={e=>editProduct(product.id,'description',e.target.value)} /><br/>
+                  <input type="number" value={product.price} onChange={e=>editProduct(product.id,'price',parseInt(e.target.value))} /><br/>
+                </>
+              ) : (
+                <>
+                  <h4>{product.title}</h4>
+                  <p>{product.description}</p>
+                  <p>EGP {product.price}</p>
+                </>
+              )}
+              <button onClick={()=>addToCart(product)}>Add to Cart</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="cart" style={{padding:'50px', background:'#111'}}>
+        <h3>Cart</h3>
+        {cart.length === 0 ? <p>Cart is empty</p> : (
+          <div>
+            {cart.map((item,i)=>(
+              <div key={i}>{item.title} - EGP {item.price}</div>
+            ))}
+            <h4>Total: EGP {total}</h4>
+          </div>
+        )}
+      </section>
+
+      <section id="about" style={{padding:'50px'}}>
+        <h3>About Tech Touch</h3>
+        <p>We provide high-quality mobile accessories at affordable prices.</p>
+      </section>
+
+      <section id="contact" style={{padding:'50px'}}>
+        <h3>Contact Us</h3>
+        <form>
+          <input placeholder="Name" /><br/>
+          <input placeholder="Email" /><br/>
+          <textarea placeholder="Message"></textarea><br/>
+          <button>Send</button>
+        </form>
+      </section>
+
+      <footer style={{textAlign:'center', padding:'20px', borderTop:'1px solid #444'}}>
+        © {new Date().getFullYear()} Tech Touch — All Rights Reserved.
+      </footer>
+    </div>
+  );
+}body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0f0f0f;
+  color: white;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+input, textarea {
+  border: none;
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+}
